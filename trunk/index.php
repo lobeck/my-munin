@@ -28,10 +28,10 @@ foreach ($data as $row)
 		echo "		<td>\n";
 		echo "			<table>\n";
 		echo "				<tr>\n";
-		echo "					<td>" . $graph["service_title"] . " per ". $graph["graphtype"] . " on " . $graph["server"] . " (" . $graph["category"] . ")</td>\n";
+		echo "					<td>" . $graph["service_title"] . " per ". $graph["graphtype"] . " on " . $graph["host"] . " (" . $graph["domain"] . ")</td>\n";
 		echo "				</tr>\n";
 		echo "				<tr>\n";
-		echo "					<td><img src=\"". $baseurl . $graph["category"] . $urlseparator . $graph["server"] . $graphseparator . $graph["service"] . $graphseparator . $graph["graphtype"] . $graphextension . "\"></td>\n";
+		echo "					<td><img src=\"". $baseurl . $graph["domain"] . $urlseparator . $graph["host"] . $graphseparator . $graph["service"] . $graphseparator . $graph["graphtype"] . $graphextension . "\"></td>\n";
 		echo "				</tr>\n";
 		echo "			</table>\n";
 		echo "		</td>\n";
