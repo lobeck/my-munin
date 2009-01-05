@@ -11,12 +11,12 @@ $graphextension = ".png";
 $profileSQL = "SELECT id, name FROM profile ORDER BY id;";
 $profileQuery = mysql_query($profileSQL);
 
-echo "<select>";
+echo "<select>\n";
 while ($singleProfile = mysql_fetch_assoc($profileQuery))
 {
-echo "<option value=\"". $singleProfile["id"] ."\">". $singleProfile["name"] . "</option>";
+echo "	<option value=\"". $singleProfile["id"] ."\">". $singleProfile["name"] . "</option>\n";
 }
-echo "</select>";
+echo "</select>\n\n";
 
 $sql = "select * from v_collect;";
 
