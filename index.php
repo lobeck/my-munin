@@ -3,7 +3,15 @@
 mysql_connect("localhost", "mymunin", "");
 mysql_select_db("mymunin");
 
-$profile = 1; //just for debugging
+function getSelectedProfile() {
+	if (is_numeric($_COOKIE["profileID"]))
+	{
+		return $_COOKIE["profileID"];
+	} else {
+		return 1;
+	}
+}
+$profile = getSelectedProfile();
 $urlseparator = "/";
 $graphseparator = "-";
 $graphextension = ".png";
@@ -13,23 +21,43 @@ $graphextension = ".png";
 	<title></title>
 	<script type="text/javascript" src="js/prototype.js"></script>
 	<script type="text/javascript" src="js/scriptaculous.js"></script>
+	<script type="text/javascript" src="js/cookie.js"></script>
 	<style type="text/css">
 		.graph { float: left; border: 1px dotted; padding: 2.5px; margin: 2.5px; display:block; } 
 	</style>
 </head>
 <body>
 <?php 
-$profileSQL = "SELECT id, name FROM profile ORDER BY id;";
-$profileQuery = mysql_query($profileSQL);
+/*
+ * get all saved profiles
+ */
 
-echo "<select>\n";
-while ($singleProfile = mysql_fetch_assoc($profileQuery))
-{
-echo "	<option value=\"". $singleProfile["id"] ."\">". $singleProfile["name"] . "</option>\n";
-}
-echo "</select>\n\n";
+$profilesSQL = "SELECT id, name FROM profile ORDER BY id;";
+$profilesQuery = mysql_query($profilesSQL);
 
-$sql = "select * from v_collect;";
+?>
+	<select>
+<?php 
+	
+	/*
+	 * generate one <option> tag for every saved profile
+	 */
+	while ($singleProfile = mysql_fetch_assoc($profilesQuery))
+	{
+?>
+		<option value="<?php echo $singleProfile["id"]; ?>"<?php echo ($singleProfile["id"] == $profile ? " selected=\"selected\"" : "" ); ?>><?php echo $singleProfile["name"]; ?></option>
+<?php 
+	}
+?>
+	</select>
+<?php 
+
+$selectedProfileSQL = "select * from profile where id = ". $profile .";";
+$selectedProfileQuery = mysql_query($selectedProfileSQL);
+
+$selectedProfile = mysql_fetch_assoc($selectedProfileQuery);
+
+$sql = "select * from v_collect where profileID = ". $profile .";";
 
 $result = mysql_query($sql);
 
@@ -44,7 +72,7 @@ while($graph = mysql_fetch_assoc($result))
 	echo "			<td>" . $graph["service_title"] . " per ". $graph["graphtype"] . " on " . $graph["host"] . " (" . $graph["domain"] . ")</td>\n";
 	echo "		</tr>\n";
 	echo "		<tr>\n";
-	echo "			<td><img src=\"". $baseurl . $graph["domain"] . $urlseparator . $graph["host"] . $graphseparator . $graph["service"] . $graphseparator . $graph["graphtype"] . $graphextension . "\"></td>\n";
+	echo "			<td><img src=\"". $selectedProfile["baseURL"] . $graph["domain"] . $urlseparator . $graph["host"] . $graphseparator . $graph["service"] . $graphseparator . $graph["graphtype"] . $graphextension . "\"></td>\n";
 	echo "		</tr>\n";
 	echo "	</table>\n";
 	echo "</div>\n";
