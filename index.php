@@ -1,5 +1,9 @@
 <?php
-
+/* 
+ * $Id$ 
+ * 
+ * 
+ */
 mysql_connect("localhost", "mymunin", "");
 mysql_select_db("mymunin");
 
