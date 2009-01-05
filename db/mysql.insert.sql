@@ -6,9 +6,9 @@ CREATE SCHEMA IF NOT EXISTS `mymunin` DEFAULT CHARACTER SET latin1 COLLATE latin
 USE `mymunin`;
 
 -- -----------------------------------------------------
--- Table `mymunin`.`domain`
+-- Table `mymunin`.`server_category`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `mymunin`.`domain` (
+CREATE  TABLE IF NOT EXISTS `mymunin`.`server_category` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(45) NOT NULL ,
   PRIMARY KEY (`id`) )
@@ -16,26 +16,26 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mymunin`.`host`
+-- Table `mymunin`.`servers`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `mymunin`.`host` (
+CREATE  TABLE IF NOT EXISTS `mymunin`.`servers` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(45) NOT NULL ,
-  `domainID` INT NOT NULL ,
+  `server_category` INT NOT NULL ,
   PRIMARY KEY (`id`) ,
-  INDEX `server_category` (`domainID` ASC) ,
+  INDEX server_category (`server_category` ASC) ,
   CONSTRAINT `server_category`
-    FOREIGN KEY (`domainID` )
-    REFERENCES `mymunin`.`domain` (`id` )
+    FOREIGN KEY (`server_category` )
+    REFERENCES `mymunin`.`server_category` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mymunin`.`service`
+-- Table `mymunin`.`services`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `mymunin`.`service` (
+CREATE  TABLE IF NOT EXISTS `mymunin`.`services` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(45) NOT NULL ,
   `title` VARCHAR(45) NOT NULL ,
@@ -54,42 +54,40 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mymunin`.`profile`
+-- Table `mymunin`.`profiles`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `mymunin`.`profile` (
+CREATE  TABLE IF NOT EXISTS `mymunin`.`profiles` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(45) NOT NULL ,
-  `baseURL` VARCHAR(80) NOT NULL ,
-  `width` INT NOT NULL DEFAULT 1024 ,
   PRIMARY KEY (`id`) )
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mymunin`.`node`
+-- Table `mymunin`.`server_service`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `mymunin`.`node` (
+CREATE  TABLE IF NOT EXISTS `mymunin`.`server_service` (
   `id` INT NOT NULL AUTO_INCREMENT ,
-  `hostID` INT NOT NULL ,
-  `serviceID` INT NOT NULL ,
-  `graphtypeID` INT NOT NULL ,
-  INDEX `server_id` (`hostID` ASC) ,
-  INDEX `services_id` (`serviceID` ASC) ,
-  INDEX `graphtype_id` (`graphtypeID` ASC) ,
+  `server` INT NOT NULL ,
+  `service` INT NOT NULL ,
+  `graphtype` INT NOT NULL ,
+  INDEX server_id (`server` ASC) ,
+  INDEX services_id (`service` ASC) ,
+  INDEX graphtype_id (`graphtype` ASC) ,
   PRIMARY KEY (`id`) ,
-  UNIQUE INDEX `graph` (`hostID` ASC, `serviceID` ASC, `graphtypeID` ASC) ,
+  UNIQUE INDEX graph (`server` ASC, `service` ASC, `graphtype` ASC) ,
   CONSTRAINT `server_id`
-    FOREIGN KEY (`hostID` )
-    REFERENCES `mymunin`.`host` (`id` )
+    FOREIGN KEY (`server` )
+    REFERENCES `mymunin`.`servers` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `services_id`
-    FOREIGN KEY (`serviceID` )
-    REFERENCES `mymunin`.`service` (`id` )
+    FOREIGN KEY (`service` )
+    REFERENCES `mymunin`.`services` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `graphtype_id`
-    FOREIGN KEY (`graphtypeID` )
+    FOREIGN KEY (`graphtype` )
     REFERENCES `mymunin`.`graphtype` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
@@ -97,24 +95,25 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mymunin`.`position`
+-- Table `mymunin`.`service_profile`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `mymunin`.`position` (
-  `profileID` INT NOT NULL ,
-  `nodeID` INT NOT NULL ,
-  `order` INT NOT NULL ,
-  INDEX `profileFK` (`profileID` ASC) ,
-  INDEX `serviceFK` (`nodeID` ASC) ,
-  PRIMARY KEY (`profileID`, `nodeID`) ,
-  UNIQUE INDEX `unique` (`profileID` ASC, `order` ASC) ,
+CREATE  TABLE IF NOT EXISTS `mymunin`.`service_profile` (
+  `profile` INT NOT NULL ,
+  `service` INT NOT NULL ,
+  `row` INT NOT NULL ,
+  `column` INT NOT NULL ,
+  INDEX profileFK (`profile` ASC) ,
+  INDEX serviceFK (`service` ASC) ,
+  PRIMARY KEY (`profile`, `service`) ,
+  UNIQUE INDEX unique (`profile` ASC, `row` ASC, `column` ASC) ,
   CONSTRAINT `profileFK`
-    FOREIGN KEY (`profileID` )
-    REFERENCES `mymunin`.`profile` (`id` )
+    FOREIGN KEY (`profile` )
+    REFERENCES `mymunin`.`profiles` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `serviceFK`
-    FOREIGN KEY (`nodeID` )
-    REFERENCES `mymunin`.`node` (`id` )
+    FOREIGN KEY (`service` )
+    REFERENCES `mymunin`.`server_service` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -129,55 +128,39 @@ CREATE TABLE IF NOT EXISTS `mymunin`.`v_collect` (`id` INT);
 -- View `mymunin`.`v_collect`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `mymunin`.`v_collect`;
-CREATE  OR REPLACE VIEW `mymunin`.`v_collect` AS
-select
- domain.name as domain,
- host.name as host,
- service.name as service,
- service.title as service_title,
+CREATE OR REPLACE  VIEW `mymunin`.`v_collect` AS
+select 
+ server_category.name as category,
+ servers.name as server,
+ services.name as service,
+ services.title as service_title,
  graphtype.name as graphtype,
- position.profileID as profileID,
- node.id as nodeID,
- position.order as 'order'
-from
- position,
- node,
- service,
- host,
- domain,
- graphtype
+ server_service.column as 'column',
+ server_service.row as 'row',
+ profiles.name as profile
+from 
+ server_service,
+ servers,
+ services,
+ graphtype,
+ server_category,
+ service_profile,
+ profiles
 where
- position.nodeID = node.id
+ server_service.server = servers.id
 and
- node.serviceID = service.id
+ server_service.service = services.id
+and 
+ server_service.graphtype = graphtype.id
 and
- node.graphtypeID = graphtype.id
-and 
- node.hostID = host.id
-and 
- host.domainID = domain.id
+ servers.server_category = server_category.id
+and
+ service_profile.service = server_service.id
+and
+ service_profile.profile = profiles.id
 order by
- position.order;
-USE `mymunin`;
-
--- -----------------------------------------------------
--- Data for table `mymunin`.`graphtype`
--- -----------------------------------------------------
-SET AUTOCOMMIT=0;
-INSERT INTO `graphtype` (`id`, `name`) VALUES (1, 'day');
-INSERT INTO `graphtype` (`id`, `name`) VALUES (2, 'week');
-INSERT INTO `graphtype` (`id`, `name`) VALUES (3, 'month');
-INSERT INTO `graphtype` (`id`, `name`) VALUES (4, 'year');
-
-COMMIT;
-
--- -----------------------------------------------------
--- Data for table `mymunin`.`profile`
--- -----------------------------------------------------
-SET AUTOCOMMIT=0;
-INSERT INTO `profile` (`id`, `name`, `baseURL`, `width`) VALUES (1, 'default', 'http://example.org/munin/', );
-
-COMMIT;
+ server_service.row,
+ server_service.column;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;
