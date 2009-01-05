@@ -60,6 +60,7 @@ CREATE  TABLE IF NOT EXISTS `mymunin`.`profile` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(45) NOT NULL ,
   `baseURL` VARCHAR(80) NOT NULL ,
+  `width` INT NOT NULL DEFAULT 1024 ,
   PRIMARY KEY (`id`) )
 ENGINE = InnoDB;
 
@@ -96,17 +97,16 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mymunin`.`arrangement`
+-- Table `mymunin`.`position`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `mymunin`.`arrangement` (
+CREATE  TABLE IF NOT EXISTS `mymunin`.`position` (
   `profileID` INT NOT NULL ,
   `nodeID` INT NOT NULL ,
-  `row` INT NOT NULL ,
-  `column` INT NOT NULL ,
+  `order` INT NOT NULL ,
   INDEX `profileFK` (`profileID` ASC) ,
   INDEX `serviceFK` (`nodeID` ASC) ,
   PRIMARY KEY (`profileID`, `nodeID`) ,
-  UNIQUE INDEX `unique` (`profileID` ASC, `row` ASC, `column` ASC) ,
+  UNIQUE INDEX `unique` (`profileID` ASC, `order` ASC) ,
   CONSTRAINT `profileFK`
     FOREIGN KEY (`profileID` )
     REFERENCES `mymunin`.`profile` (`id` )
@@ -136,17 +136,18 @@ select
  service.name as service,
  service.title as service_title,
  graphtype.name as graphtype,
- arrangement.column as 'column',
- arrangement.row as 'row'
+ position.profileID as profileID,
+ node.id as nodeID,
+ position.order as 'order'
 from
- arrangement,
+ position,
  node,
  service,
  host,
  domain,
  graphtype
 where
- arrangement.nodeID = node.id
+ position.nodeID = node.id
 and
  node.serviceID = service.id
 and
@@ -156,8 +157,7 @@ and
 and 
  host.domainID = domain.id
 order by
- arrangement.row,
- arrangement.column;
+ position.order;
 USE `mymunin`;
 
 -- -----------------------------------------------------
@@ -175,7 +175,7 @@ COMMIT;
 -- Data for table `mymunin`.`profile`
 -- -----------------------------------------------------
 SET AUTOCOMMIT=0;
-INSERT INTO `profile` (`id`, `name`, `baseURL`) VALUES (1, 'default', 'http://example.org/munin/');
+INSERT INTO `profile` (`id`, `name`, `baseURL`, `width`) VALUES (1, 'default', 'http://example.org/munin/', );
 
 COMMIT;
 
