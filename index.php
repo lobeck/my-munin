@@ -11,6 +11,7 @@ function getSelectedProfile() {
 		return 1;
 	}
 }
+
 $profile = getSelectedProfile();
 $urlseparator = "/";
 $graphseparator = "-";
@@ -23,7 +24,9 @@ $graphextension = ".png";
 	<script type="text/javascript" src="js/scriptaculous.js"></script>
 	<script type="text/javascript" src="js/cookie.js"></script>
 	<style type="text/css">
+		body { font-size: 11px; }
 		.graph { float: left; border: 1px dotted; padding: 2.5px; margin: 2.5px; display:block; } 
+		.graph_title { cursor:move; }
 	</style>
 </head>
 <body>
@@ -42,8 +45,7 @@ $profilesQuery = mysql_query($profilesSQL);
 	/*
 	 * generate one <option> tag for every saved profile
 	 */
-	while ($singleProfile = mysql_fetch_assoc($profilesQuery))
-	{
+	while ($singleProfile = mysql_fetch_assoc($profilesQuery)) {
 ?>
 		<option value="<?php echo $singleProfile["id"]; ?>"<?php echo ($singleProfile["id"] == $profile ? " selected=\"selected\"" : "" ); ?>><?php echo $singleProfile["name"]; ?></option>
 <?php 
@@ -69,7 +71,7 @@ while($graph = mysql_fetch_assoc($result))
 	echo "<div class=\"graph\" id=\"graph_". $graph["profileID"]. ":" . $graph["nodeID"] ."\">\n";
 	echo "	<table>\n";
 	echo "		<tr>\n";
-	echo "			<td>" . $graph["service_title"] . " per ". $graph["graphtype"] . " on " . $graph["host"] . " (" . $graph["domain"] . ")</td>\n";
+	echo "			<td class=\"graph_title\">" . $graph["service_title"] . " per ". $graph["graphtype"] . " on " . $graph["host"] . " (" . $graph["domain"] . ")</td>\n";
 	echo "		</tr>\n";
 	echo "		<tr>\n";
 	echo "			<td><img src=\"". $selectedProfile["baseURL"] . $graph["domain"] . $urlseparator . $graph["host"] . $graphseparator . $graph["service"] . $graphseparator . $graph["graphtype"] . $graphextension . "\"></td>\n";
