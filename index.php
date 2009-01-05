@@ -1,13 +1,22 @@
 <?php
 
-mysql_connect("localhost", "root", "");
+mysql_connect("localhost", "mymunin", "");
 mysql_select_db("mymunin");
 
-//$profile = htmlspecialchars($_GET["profile"]); not yet implemented
-$baseurl = "<enter url here (http://example.com/munin/)>";
+$profile = 1; //just for debugging
 $urlseparator = "/";
 $graphseparator = "-";
 $graphextension = ".png";
+
+$profileSQL = "SELECT id, name FROM profile ORDER BY id;";
+$profileQuery = mysql_query($profileSQL);
+
+echo "<select>";
+while ($singleProfile = mysql_fetch_assoc($profileQuery))
+{
+echo "<option value=\"". $singleProfile["id"] ."\">". $singleProfile["name"] . "</option>";
+}
+echo "</select>";
 
 $sql = "select * from v_collect;";
 
