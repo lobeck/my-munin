@@ -5,6 +5,9 @@
 	<script type="text/javascript" src="js/scriptaculous.js"></script>
 	<script type="text/javascript" src="js/cookie.js"></script>
 	<link rel="stylesheet" href="css/main.css" type="text/css">
+	<style type="text/css">
+	 #graphs {literal}{{/literal} width: {$selectedProfile.width}px; {literal}}{/literal}
+	 </style>
 </head>
 <body>
 	<select>
