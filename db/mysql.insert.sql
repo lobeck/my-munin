@@ -175,7 +175,7 @@ COMMIT;
 -- Data for table `mymunin`.`profile`
 -- -----------------------------------------------------
 SET AUTOCOMMIT=0;
-INSERT INTO `profile` (`id`, `name`, `baseURL`, `width`) VALUES (1, 'default', 'http://example.org/munin/', );
+INSERT INTO `profile` (`id`, `name`, `baseURL`, `width`) VALUES (1, 'default', 'http://example.org/munin/', 600);
 
 COMMIT;
 
