@@ -1,1 +1,4 @@
 @CHARSET "UTF-8";
+body { font-size: 11px; }
+.graph { float: left; border: 1px dotted; padding: 2.5px; margin: 2.5px; display:block; }
+.graph_title { cursor:move; }
