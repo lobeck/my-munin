@@ -3,14 +3,12 @@ function getAvailableProfiles()
 {
 	global $mainDB;
 
-	$profilesSQL = "SELECT id, name FROM profile ORDER BY id";
-	$profilesResult = mysql_query($profilesSQL, $mainDB);
-	
+	$profilesQuery = $mainDB->query("SELECT id, name FROM profile ORDER BY id");
 	$profiles = null;
 	
-	for ($i = 0; $i < mysql_num_rows($profilesResult); $i++)
+	for ($i = 0; $i < $profilesQuery->num_rows; $i++)
 	{
-		$currentProfile = mysql_fetch_assoc($profilesResult);
+		$currentProfile = $profilesQuery->fetch_assoc();
 		$profiles[$i] = $currentProfile;
 	}
 	
@@ -23,12 +21,11 @@ function getProfile($id)
 	
 	global $mainDB;
 	
-	$profileSQL = "select * from profile where id = ". $id;
-	$profileResult = mysql_query($profileSQL, $mainDB);
-
-	if ($profileResult != false) 
+	$profileQuery = $mainDB->query("select * from profile where id = ". $id);
+	
+	if ($profileQuery !== false) 
 	{
-		return mysql_fetch_assoc($profileResult);
+		return $profileQuery->fetch_assoc();
 	}
 	else 
 	{
@@ -40,14 +37,13 @@ function getProfile($id)
 function getGraphs($profileId)
 {
 	global $mainDB;
-	$graphSQL = "select * from v_collect where profileID = ". $profileId;
+	$graphQuery = $mainDB->query("select * from v_collect where profileID = ". $profileId);
 
-	$graphResult = mysql_query($graphSQL, $mainDB);
 	$graphs = null;
 	
-	for ($i = 0; $i < mysql_num_rows($graphResult); $i++)
+	for ($i = 0; $i < $graphQuery->num_rows; $i++)
 	{
-		$graph = mysql_fetch_assoc($graphResult);
+		$graph = $graphQuery->fetch_assoc();
 		$graphs[$i] = $graph;
 	}
 	

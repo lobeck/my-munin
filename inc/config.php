@@ -1,6 +1,6 @@
 <?php
-$mainDB = mysql_connect("localhost", "mymunin", "");
-mysql_select_db("mymunin");
+$mainDB = new mysqli("localhost", "mymunin", "");
+$mainDB->select_db("mymunin");
 
 define("INSTALL_DIR", $_SERVER['DOCUMENT_ROOT'] . "/mymunin");
 
