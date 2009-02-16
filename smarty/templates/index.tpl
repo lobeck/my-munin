@@ -28,9 +28,10 @@
 		</table>
 	</div>
 	{/foreach}
+	<div id="add" class="graph">add a new graph</div>
 </div>
 
-<div id="add" class="graph">add a new graph</div>
+
 <input type="submit" value="save" onClick="save();" />
 <p id="serialize">none</p>
 <script type="text/javascript">
@@ -52,6 +53,12 @@
 	function save()
 	{
 		info.update(Sortable.sequence('graphs'));
+		
+		new Ajax.Request("save.php", {
+			method: "post",
+			parameters: { data: Sortable.serialize("graphs") },
+			onSuccess: function(transport) { info.update(transport.responseText) }
+		});
 	}
 	function bigger()
 	{
