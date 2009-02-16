@@ -11,6 +11,7 @@ function getAvailableProfiles()
 		$currentProfile = $profilesQuery->fetch_assoc();
 		$profiles[$i] = $currentProfile;
 	}
+	$profilesQuery->free();
 	
 	return $profiles;
 }
@@ -25,7 +26,9 @@ function getProfile($id)
 	
 	if ($profileQuery !== false) 
 	{
-		return $profileQuery->fetch_assoc();
+		$returnValue = $profileQuery->fetch_assoc();
+		$profileQuery->free();
+		return $returnValue;
 	}
 	else 
 	{
@@ -46,6 +49,7 @@ function getGraphs($profileId)
 		$graph = $graphQuery->fetch_assoc();
 		$graphs[$i] = $graph;
 	}
+	$graphQuery->free();
 	
 	return $graphs;
 	
