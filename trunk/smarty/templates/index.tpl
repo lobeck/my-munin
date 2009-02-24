@@ -15,6 +15,11 @@
 			<option value="{$singleProfile.id}" {if $selectedProfile.id eq $singleProfile.id}selected{/if}>{$singleProfile.name}</option>
 		{/foreach}
 	</select>
+	<div>
+	<form name="createProfile" onSubmit="createProfile(); return false;">
+		<input type="text" id="profileName" name="profileName">
+	</form>
+	</div>
 <div id="graphs">
 	{foreach from=$graphs item=graph}
 	<div class="graph" id="graph_{$graph.profileID}:{$graph.nodeID}">
@@ -49,6 +54,8 @@
 	
 	var graphs = $('graphs');
 	var info = $('serialize');
+	var profileName = $('profileName');
+	
 	
 	function save()
 	{
@@ -59,6 +66,19 @@
 			parameters: { data: Sortable.serialize("graphs") },
 			onSuccess: function(transport) { info.update(transport.responseText) }
 		});
+	}
+	
+	function createProfile()
+	{
+		alert( "bla" );
+		info.update( $profileName );
+		
+		//new Ajax.Request("save.php", {
+		//	method: "post",
+		//	parameters: { profileName: profileName },
+		//	onSuccess: function(transport) { info.update(transport.responseText) }
+		//});
+		return false;
 	}
 	function bigger()
 	{
