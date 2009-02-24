@@ -20,5 +20,5 @@ $smarty->config_dir = SMARTY_DIR;
 $smarty->template_dir = INSTALL_DIR ."/smarty/templates";
 $smarty->compile_dir = INSTALL_DIR ."/smarty/templates_c";
 $smarty->compile_check = TRUE;
-$smarty->debugging = TRUE;
+$smarty->debugging = FALSE;
 ?>
