@@ -2,6 +2,12 @@
 $mainDB = new mysqli("localhost", "mymunin", "");
 $mainDB->select_db("mymunin");
 
+if ($mainDB->connect_error)
+{
+	print "Error connection to DB: ". mysqli_connect_error();
+	exit;
+}
+
 define("INSTALL_DIR", $_SERVER['DOCUMENT_ROOT'] . "/mymunin");
 
 define('SMARTY_DIR', INSTALL_DIR . '/libs/smarty/' );
