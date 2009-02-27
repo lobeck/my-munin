@@ -12,12 +12,15 @@
 <body>
 	<select>
 		{foreach from=$availableProfiles item=singleProfile}
-			<option value="{$singleProfile.id}" {if $selectedProfile.id eq $singleProfile.id}selected{/if}>{$singleProfile.name}</option>
+			<option value="{$singleProfile.id}"{if $selectedProfile.id eq $singleProfile.id} selected{/if}>{$singleProfile.name}</option>
 		{/foreach}
 	</select>
 	<div>
-	<form name="createProfile" onSubmit="createProfile(); return false;">
-		<input type="text" id="profileName" name="profileName">
+	<form onSubmit="return createProfile();">
+		<input type="text" name="newProfileName" value="profile name">
+		<input type="text" name="newProfileBaseURL" value="munin url">
+		<input type="text" name="newProfileWidth" value="width in px">
+		<input type="submit" value="create profile">
 	</form>
 	</div>
 <div id="graphs">
@@ -47,21 +50,20 @@
 	  Sortable.create('graphs', {
 	    tag:'div',overlap:'horizontal',constraint: false,
 	    onUpdate:function(){
-	       info.update(Sortable.serialize('graphs'));
+	       info.update("Graph order changed - please save");
 	    }
 	  });
 	})();
 	
 	var graphs = $('graphs');
 	var info = $('serialize');
-	var profileName = $('profileName');
 	
 	
 	function save()
 	{
-		info.update(Sortable.sequence('graphs'));
+		info.update("saving...");
 		
-		new Ajax.Request("save.php", {
+		new Ajax.Request("/ajax/saveOrder.php", {
 			method: "post",
 			parameters: { data: Sortable.serialize("graphs") },
 			onSuccess: function(transport) { info.update(transport.responseText) }
@@ -70,15 +72,18 @@
 	
 	function createProfile()
 	{
-		alert( "bla" );
-		info.update( $profileName );
+		var newProfileName = $('newProfileName');
+		var newProfileBaseURL = $('newProfileBaseURL');
+		var newProfileWidth = $('newProfileWidth');
+		
+		info.update( newProfileName.value + ' - ' + newProfileBaseURL.value + ' - ' + newProfileWidth.value );
 		
 		//new Ajax.Request("save.php", {
 		//	method: "post",
 		//	parameters: { profileName: profileName },
 		//	onSuccess: function(transport) { info.update(transport.responseText) }
 		//});
-		return false;
+		return false; // to stop the submit process
 	}
 	function bigger()
 	{
