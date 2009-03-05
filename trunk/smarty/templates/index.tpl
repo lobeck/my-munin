@@ -17,10 +17,10 @@
 		{/foreach}
 	</select>
 	<div>
-	<form onSubmit="createProfile(); return false;" action="/ajax/createProfile.php?method=noscript" method="POST">
-		<input type="text" id="newProfileName" name="newProfileName" value="profile name">
-		<input type="text" id="newProfileBaseURL" name="newProfileBaseURL" value="munin url">
-		<input type="text" id="newProfileWidth" name="newProfileWidth" value="width in px">
+	<form onSubmit="createProfile(); return false;" id="newProfileForm" action="ajax/createProfile.php?method=noscript" method="POST">
+		<input type="text" name="newProfileName" value="profile name">
+		<input type="text" name="newProfileBaseURL" value="munin url">
+		<input type="text" name="newProfileWidth" value="width in px">
 		<input type="submit" value="create profile">
 	</form>
 	</div>
@@ -65,7 +65,7 @@
 	{
 		info.update("saving...");
 		
-		new Ajax.Request("/ajax/saveOrder.php", {
+		new Ajax.Request("ajax/saveOrder.php", {
 			method: "post",
 			parameters: { data: Sortable.serialize("graphs") },
 			onSuccess: function(transport) { info.update(transport.responseText) }
@@ -74,17 +74,14 @@
 	
 	function createProfile()
 	{
-		var newProfileName = jQuery('#newProfileName');
-		var newProfileBaseURL = jQuery('#newProfileBaseURL');
-		var newProfileWidth = jQuery('#newProfileWidth');
+		info.update( "creating profile..." );
 		
-		info.update( newProfileName.val() + ' - ' + newProfileBaseURL.val() + ' - ' + newProfileWidth.val() );
-		
-		//new Ajax.Request("save.php", {
-		//	method: "post",
-		//	parameters: { profileName: profileName },
-		//	onSuccess: function(transport) { info.update(transport.responseText) }
-		//});
+		new Ajax.Request("ajax/createProfile.php", {
+			method: "post",
+			parameters: $('newProfileForm').serialize(true),
+			onSuccess: function(transport) { info.update(transport.responseText) },
+			onFailure: function(transport) { info.update(transport.responseText) }
+		});
 	}
 	
 	function bigger()
