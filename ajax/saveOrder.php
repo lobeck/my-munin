@@ -1,5 +1,6 @@
 <?php
 include("../inc/config.php");
+include("../inc/functions.php");
 global $mainDB;
 $mainDB->autocommit(false);
 
@@ -41,15 +42,5 @@ $statement->close();
 
 $mainDB->commit();
 $mainDB->close();
-
-function handleDBError()
-{
-	global $mainDB;
-	
-	echo "transaction error - ". $mainDB->error ."<br";
-	$mainDB->rollback();
-	$mainDB->close();
-	exit; 
-}
 
 ?>

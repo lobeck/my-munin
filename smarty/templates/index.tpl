@@ -11,7 +11,7 @@
 	 </style>
 </head>
 <body>
-	<select>
+	<select id="profileSelect" onchange="alert('changed');">
 		{foreach from=$availableProfiles item=singleProfile}
 			<option value="{$singleProfile.id}"{if $selectedProfile.id eq $singleProfile.id} selected{/if}>{$singleProfile.name}</option>
 		{/foreach}
@@ -60,6 +60,7 @@
 	
 	var graphs = $('graphs');
 	var info = $('serialize');
+	var profileSelect = jQuery('#profileSelect');
 	
 	function save()
 	{
@@ -79,9 +80,18 @@
 		new Ajax.Request("ajax/createProfile.php", {
 			method: "post",
 			parameters: $('newProfileForm').serialize(true),
-			onSuccess: function(transport) { info.update(transport.responseText) },
+			onSuccess: function(transport) { profileCreated(transport) },
 			onFailure: function(transport) { info.update(transport.responseText) }
 		});
+	}
+	
+	
+	function profileCreated(transport)
+	{
+		var response = JSON.parse(transport.responseText);
+		
+		profileSelect.append('<option value="' + response.newProfile.id + '">' + response.newProfile.name + '</option>');
+		info.update('created profile "' + response.newProfile.name + '"');
 	}
 	
 	function bigger()
