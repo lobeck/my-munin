@@ -54,4 +54,14 @@ function getGraphs($profileId)
 	return $graphs;
 	
 }
+
+function handleDBError()
+{
+	global $mainDB;
+	
+	echo "transaction error - ". $mainDB->error ."<br";
+	$mainDB->rollback();
+	$mainDB->close();
+	exit; 
+}
 ?>
