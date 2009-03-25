@@ -24,15 +24,6 @@ include("inc/config.php");
 include("inc/functions.php");
 global $smarty;
 
-function getSelectedProfile() {
-	if (is_numeric($_COOKIE["profileID"]))
-	{
-		return $_COOKIE["profileID"];
-	} else {
-		return 1;
-	}
-}
-
 $selectedProfile = getSelectedProfile();
 $config["urlseparator"] = "/";
 $config["graphseparator"] = "-";
