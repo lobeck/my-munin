@@ -64,4 +64,13 @@ function handleDBError()
 	$mainDB->close();
 	exit; 
 }
+
+function getSelectedProfile() {
+	if (is_numeric($_COOKIE["profileID"]))
+	{
+		return $_COOKIE["profileID"];
+	} else {
+		return 1;
+	}
+}
 ?>
